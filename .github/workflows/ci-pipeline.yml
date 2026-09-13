@@ -26,4 +26,4 @@ jobs:
         
     - name: Run Pytest Suite
       run: |
-        pytest tests/ -v
+        PYTHONPATH=. pytest tests/ -v
