@@ -12,7 +12,7 @@ permissions:
 
 env:
   PYTHON_VERSION: "3.12"
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
   IMAGE_TAG: sha-${{ github.sha }}
 
 jobs:
