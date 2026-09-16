@@ -1,7 +1,9 @@
 import asyncio
 import time
+import pytest
 from api.async_agent import AsyncPestVisionAgent
 
+@pytest.mark.asyncio
 async def test_throughput():
     # Initialize agent with a tuned concurrency limit
     agent = AsyncPestVisionAgent(max_concurrent_tasks=100)
