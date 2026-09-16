@@ -24,3 +24,9 @@ An AI-powered agricultural diagnostic and mandi pricing platform built with high
 * **WebSocket Telemetry**: Built a bi-directional WebSocket dashboard for system administrators to monitor the agent's deterministic state and token consumption in real-time.
 * **Responsive Interface**: Developed a mobile-first, zero-dependency HTML/JS frontend utilizing modern Fetch API streams and CSS Flexbox.
 * **Observability**: Integrated `prometheus-fastapi-instrumentator` to automatically expose OpenTelemetry metrics for production SLA monitoring.
+
+## Deployment
+
+The `deploy-pipeline.yml` workflow runs tests, Bandit, Safety, and a Trivy scan before publishing an immutable SHA-tagged image and `latest` to GHCR. Pull requests run verification and container scanning without publishing.
+
+To enable the production host rollout, create the `production` environment, set the environment variable `DEPLOY_ENABLED` to `true`, and add these environment secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH`, `GHCR_READ_USER`, and `GHCR_READ_TOKEN`. The target host needs Docker Engine and Docker Compose v2; `DEPLOY_PATH` must be writable by `DEPLOY_USER`.
