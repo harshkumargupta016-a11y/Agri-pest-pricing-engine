@@ -1,26 +1,41 @@
-version: '3.8'
-
 services:
+  api:
+    build:
+      context: .
+    image: ${IMAGE_NAME:-ghcr.io/harshkumargupta016-a11y/agri-pest-pricing-engine}:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/metrics')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
   db:
     image: postgres:15
-    container_name: agri_postgres
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-agri}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-dev-password}
+      POSTGRES_DB: ${POSTGRES_DB:-agri}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-agri} -d $${POSTGRES_DB:-agri}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7
-    container_name: agri_redis
     ports:
       - "6379:6379"
     healthcheck:
