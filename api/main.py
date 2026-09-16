@@ -27,27 +27,12 @@ vision_agent = PestVisionAgent()
 class VisionRequest(BaseModel):
     image_base64: str
 
-class PricingRequest(BaseModel):
+
     commodity: str
     state: str
     district: str
 
-# 1. New Real-Time WebSocket Telemetry Endpoint
-@app.websocket("/api/v1/metrics/live")
-async def websocket_metrics(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            await websocket.send_json({
-                "state": vision_agent.state,
-                "tokens": vision_agent.total_tokens_used,
-                "circuit_breaker": getattr(vision_agent, 'circuit_breaker_active', False)
-            })
-            await asyncio.sleep(1)
-    except WebSocketDisconnect:
-        pass
 
-# 2. Existing SSE Streaming Endpoint
 @app.post("/api/v1/diagnose/stream", dependencies=[Depends(verify_rate_limit)])
 async def diagnose_crop_stream(request: VisionRequest):
     if not request.image_base64:
@@ -72,11 +57,4 @@ async def diagnose_crop_stream(request: VisionRequest):
 async def diagnose_crop(request: VisionRequest):
     return vision_agent.process_diagnosis_workflow(request.image_base64)
 
-@app.post("/api/v1/mandi/prices", dependencies=[Depends(verify_rate_limit)])
-async def get_mandi_prices(request: PricingRequest):
-    result = pricing_engine.get_price(request.commodity, request.state, request.district)
-    return {"status": "success", "data": result}
 
-# Mount Frontend
-os.makedirs("static", exist_ok=True)
-app.mount("/ui", StaticFiles(directory="static", html=True), name="static")
