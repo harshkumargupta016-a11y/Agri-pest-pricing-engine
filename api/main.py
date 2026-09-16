@@ -1,13 +1,21 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+import uvloop
+import asyncio
 from .engine import MandiPricingEngine
 from .agent import PestVisionAgent
 
+# Drop-in replacement for standard asyncio event loop to massively boost throughput
+asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 load_dotenv()
 
-app = FastAPI(title="Agri-Pest Pricing Engine", version="0.3.0")
+# Force FastAPI to use ORJSON for lightning-fast JSON serialization
+app = FastAPI(title="Agri-Pest Pricing Engine", version="0.4.0", default_response_class=ORJSONResponse)
+
 pricing_engine = MandiPricingEngine()
 vision_agent = PestVisionAgent()
 
@@ -25,7 +33,6 @@ async def health_check():
 
 @app.get("/api/v1/agent/metrics")
 async def get_agent_metrics():
-    """Expose core algorithm profiling and state machine status."""
     return {
         "status": "success",
         "data": {
