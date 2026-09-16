@@ -10,6 +10,13 @@ jobs:
   test-agent-logic:
     runs-on: ubuntu-latest
     
+    # Spin up a Redis container for the rate limiter tests
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+          
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v3
