@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import ORJSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -7,14 +7,12 @@ import uvloop
 import asyncio
 from .engine import MandiPricingEngine
 from .agent import PestVisionAgent
+from .rate_limiter import verify_rate_limit
 
-# Drop-in replacement for standard asyncio event loop to massively boost throughput
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-
 load_dotenv()
 
-# Force FastAPI to use ORJSON for lightning-fast JSON serialization
-app = FastAPI(title="Agri-Pest Pricing Engine", version="0.4.0", default_response_class=ORJSONResponse)
+app = FastAPI(title="Agri-Pest Pricing Engine", version="0.5.0", default_response_class=ORJSONResponse)
 
 pricing_engine = MandiPricingEngine()
 vision_agent = PestVisionAgent()
@@ -29,7 +27,7 @@ class PricingRequest(BaseModel):
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "services": {"api": "online", "redis": "configured", "agent": "ready"}}
+    return {"status": "healthy", "services": {"api": "online", "redis": "configured", "agent": "ready", "rate_limiter": "active"}}
 
 @app.get("/api/v1/agent/metrics")
 async def get_agent_metrics():
@@ -43,14 +41,15 @@ async def get_agent_metrics():
         }
     }
 
-@app.post("/api/v1/diagnose")
+# Apply Distributed Rate Limiting to computationally expensive endpoints
+@app.post("/api/v1/diagnose", dependencies=[Depends(verify_rate_limit)])
 async def diagnose_crop(request: VisionRequest):
     if not request.image_base64:
         raise HTTPException(status_code=400, detail="Image data is required")
     result = vision_agent.process_diagnosis_workflow(request.image_base64)
     return result
 
-@app.post("/api/v1/mandi/prices")
+@app.post("/api/v1/mandi/prices", dependencies=[Depends(verify_rate_limit)])
 async def get_mandi_prices(request: PricingRequest):
     result = pricing_engine.get_price(request.commodity, request.state, request.district)
     return {"status": "success", "data": result}
