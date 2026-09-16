@@ -18,3 +18,9 @@ An AI-powered agricultural diagnostic and mandi pricing platform built with high
 * Python 3.12, FastAPI, Pytest
 * Redis, scikit-learn, Numpy
 * Asyncio, Memory-Profiler
+
+## 🖥️ Production UI & Real-Time Streaming
+* **Server-Sent Events (SSE)**: Implemented token-by-token streaming for generative AI responses, ensuring ultra-low perceived latency for end users.
+* **WebSocket Telemetry**: Built a bi-directional WebSocket dashboard for system administrators to monitor the agent's deterministic state and token consumption in real-time.
+* **Responsive Interface**: Developed a mobile-first, zero-dependency HTML/JS frontend utilizing modern Fetch API streams and CSS Flexbox.
+* **Observability**: Integrated `prometheus-fastapi-instrumentator` to automatically expose OpenTelemetry metrics for production SLA monitoring.
