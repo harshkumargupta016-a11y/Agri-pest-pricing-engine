@@ -27,6 +27,12 @@ vision_agent = PestVisionAgent()
 class VisionRequest(BaseModel):
     image_base64: str
 
+
+class MandiPriceRequest(BaseModel):
+    commodity: str
+    state: str
+    district: str
+
 # 2. Real-Time Streaming Endpoint (SSE)
 @app.post("/api/v1/diagnose/stream", dependencies=[Depends(verify_rate_limit)])
 async def diagnose_crop_stream(request: VisionRequest):
@@ -56,3 +62,15 @@ app.mount("/ui", StaticFiles(directory="static", html=True), name="static")
 @app.post("/api/v1/diagnose", dependencies=[Depends(verify_rate_limit)])
 async def diagnose_crop(request: VisionRequest):
     return vision_agent.process_diagnosis_workflow(request.image_base64)
+
+
+@app.post("/api/v1/mandi/prices", dependencies=[Depends(verify_rate_limit)])
+async def get_mandi_price(request: MandiPriceRequest):
+    return {
+        "status": "success",
+        "data": pricing_engine.get_price(
+            request.commodity,
+            request.state,
+            request.district,
+        ),
+    }
