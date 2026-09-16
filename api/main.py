@@ -27,6 +27,7 @@ vision_agent = PestVisionAgent()
 class VisionRequest(BaseModel):
     image_base64: str
 
+
     commodity: str
     state: str
     district: str
