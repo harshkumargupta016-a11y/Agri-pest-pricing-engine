@@ -1,141 +1,180 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agri-Pest Dashboard</title>
-    <style>
-        :root { --primary: #2d6a4f; --bg: #f8f9fa; --card-bg: #ffffff; --text: #212529; }
-        body { font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; }
-        
-        /* Navbar & Login */
-        .navbar { display: flex; justify-content: space-between; align-items: center; background-color: var(--primary); padding: 15px 30px; color: white; }
-        .login-btn { background: white; color: var(--primary); border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .login-btn:hover { background: #e9ecef; }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agri-Pest & Mandi Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #18302b;
+      --muted: #60716c;
+      --paper: #f5f7ef;
+      --panel: #ffffff;
+      --line: #dbe4d8;
+      --leaf: #25734d;
+      --sun: #e8a22b;
+      --danger: #b34e3d;
+    }
 
-        /* Grid Layout */
-        .container { max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
-        
-        /* Cards & Interactive Boxes */
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .card h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #e9ecef; padding-bottom: 10px; }
-        .interactive-box { background: #f1f3f5; padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary); min-height: 40px; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5; }
-        
-        /* Upload Section */
-        .file-upload { border: 2px dashed #adb5bd; padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 15px; }
-        .file-upload input { display: none; }
-        #imagePreview { max-width: 100%; border-radius: 8px; margin-top: 15px; display: none; }
-        
-        button.action-btn { background: var(--primary); color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 1rem; cursor: pointer; font-weight: bold; }
-        button.action-btn:hover { opacity: 0.9; }
-    </style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: radial-gradient(circle at top right, #fff4d8 0, transparent 32rem), var(--paper);
+      color: var(--ink);
+      font: 16px/1.5 Georgia, "Times New Roman", serif;
+    }
+
+    header, main { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; }
+    header { padding: 3.5rem 0 2.5rem; }
+    .eyebrow { margin: 0 0 .6rem; color: var(--leaf); font: 700 .75rem/1.2 system-ui, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+    h1, h2, p { margin-top: 0; }
+    h1 { max-width: 720px; margin-bottom: .75rem; font-size: clamp(2.3rem, 6vw, 4.8rem); line-height: .98; letter-spacing: -.03em; }
+    .intro { max-width: 650px; margin-bottom: 0; color: var(--muted); font-size: 1.1rem; }
+
+    main { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding-bottom: 3rem; }
+    section {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      padding: 1.5rem;
+      box-shadow: 0 1rem 2rem rgba(24, 48, 43, .05);
+    }
+    section.wide { grid-column: 1 / -1; }
+    h2 { margin-bottom: 1rem; font-size: 1.45rem; }
+    label { display: block; margin: .75rem 0 .25rem; color: var(--muted); font: 700 .8rem system-ui, sans-serif; }
+    input, button { width: 100%; border: 1px solid var(--line); border-radius: 5px; padding: .7rem .8rem; font: inherit; }
+    input { background: #fbfcf8; color: var(--ink); }
+    button {
+      margin-top: 1rem;
+      border-color: var(--leaf);
+      background: var(--leaf);
+      color: white;
+      cursor: pointer;
+      font-family: system-ui, sans-serif;
+      font-weight: 700;
+    }
+    button:hover { background: #1d5b3d; }
+
+    .metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+      padding: .8rem 0;
+    }
+    .metric:last-child { border-bottom: 0; }
+    .metric strong { color: var(--leaf); font: 700 1.1rem system-ui, sans-serif; }
+    pre {
+      min-height: 5rem;
+      margin: 1rem 0 0;
+      overflow: auto;
+      white-space: pre-wrap;
+      color: var(--muted);
+      font: .9rem/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+    .status { color: var(--muted); font-family: system-ui, sans-serif; }
+
+    @media (max-width: 700px) {
+      header { padding-top: 2.5rem; }
+      main { grid-template-columns: 1fr; }
+      section.wide { grid-column: auto; }
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <p class="eyebrow">Field intelligence / live operations</p>
+    <h1>Agri-Pest &amp; Mandi Dashboard</h1>
+    <p class="intro">A practical view of crop diagnosis, local market pricing, and the agent signals behind each request.</p>
+  </header>
 
-    <!-- Top Navigation with Login -->
-    <nav class="navbar">
-        <h2>🌾 Agri-Pest & Mandi Dashboard</h2>
-        <button class="login-btn" onclick="alert('Authentication module will be connected in a future update!')">Login / Register</button>
-    </nav>
+  <main>
+    <section>
+      <h2>Mandi price lookup</h2>
+      <form id="price-form">
+        <label for="commodity">Commodity</label>
+        <input id="commodity" name="commodity" value="Soybean" required>
 
-    <div class="container">
-        <!-- LEFT COLUMN: Upload & Telemetry -->
-        <div class="column">
-            <div class="card">
-                <h3>1. Crop Image Analysis</h3>
-                <label class="file-upload">
-                    <span>📁 Click here to upload a crop image</span>
-                    <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
-                </label>
-                <img id="imagePreview" alt="Crop Preview">
-                <button class="action-btn" id="runBtn" onclick="startDiagnosis()">Analyze Crop Disease</button>
-            </div>
+        <label for="state">State</label>
+        <input id="state" name="state" value="MP" required>
 
-            <div class="card" style="margin-top: 20px;">
-                <h3>Agent Telemetry</h3>
-                <p><strong>State:</strong> <span id="agentState">IDLE</span></p>
-                <p><strong>Tokens Used:</strong> <span id="agentTokens">0</span></p>
-            </div>
-        </div>
+        <label for="district">District</label>
+        <input id="district" name="district" value="Indore" required>
 
-        <!-- RIGHT COLUMN: Results & Treatment -->
-        <div class="column">
-            <div class="card">
-                <h3>2. Diagnostic Results & Treatment</h3>
-                
-                <p><strong>System Status:</strong></p>
-                <div id="statusBox" class="interactive-box">Awaiting image upload...</div>
+        <button type="submit">Fetch current price</button>
+      </form>
+      <pre id="price-result" aria-live="polite">Enter a market and fetch the latest result.</pre>
+    </section>
 
-                <p><strong>Detected Disease:</strong></p>
-                <div id="diseaseBox" class="interactive-box">--</div>
+    <section>
+      <h2>Agent telemetry</h2>
+      <div class="metric">
+        <span>Workflow state</span>
+        <strong id="agent-state">Connecting</strong>
+      </div>
+      <div class="metric">
+        <span>Tokens used</span>
+        <strong id="agent-tokens">-</strong>
+      </div>
+      <div class="metric">
+        <span>Circuit breaker</span>
+        <strong id="agent-breaker">-</strong>
+      </div>
+      <p class="status" id="telemetry-status">Opening live telemetry...</p>
+    </section>
 
-                <p><strong>Cure & Protection Plan:</strong></p>
-                <div id="treatmentBox" class="interactive-box">--</div>
-            </div>
-        </div>
-    </div>
+    <section class="wide">
+      <h2>Streaming diagnosis</h2>
+      <form id="diagnosis-form">
+        <label for="image-data">Image reference</label>
+        <input id="image-data" name="image_base64" value="mock_image" required>
 
-    <!-- JavaScript to Handle UI Logic & Streaming -->
-    <script>
-        // 1. Image Preview Logic
-        function previewImage(event) {
-            const preview = document.getElementById('imagePreview');
-            const file = event.target.files[0];
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-                document.getElementById('statusBox').innerText = "Image loaded. Ready for analysis.";
-            }
-        }
+        <button type="submit">Run diagnosis stream</button>
+      </form>
+      <pre id="diagnosis-result" aria-live="polite">Diagnosis updates will appear here.</pre>
+    </section>
+  </main>
 
-        // 2. Start Streaming Diagnosis
-        function startDiagnosis() {
-            const statusBox = document.getElementById('statusBox');
-            const diseaseBox = document.getElementById('diseaseBox');
-            const treatmentBox = document.getElementById('treatmentBox');
-            
-            // Reset UI
-            statusBox.innerText = "Initializing Agent...";
-            diseaseBox.innerText = "--";
-            treatmentBox.innerText = "";
-            
-            // Note: Replace with your actual SSE endpoint if different
-            const eventSource = new EventSource('/api/v1/diagnose/stream'); 
-            
-            eventSource.onmessage = function(event) {
-                const text = event.data;
-                
-                // Parse the text to place it in the correct interactive box
-                if (text.includes("Retrieving context") || text.includes("Analyzing Image")) {
-                    statusBox.innerText = text;
-                } 
-                else if (text.includes("Disease detected:")) {
-                    diseaseBox.innerText = text.replace("Disease detected:", "").trim();
-                } 
-                else if (text === "[DONE]") {
-                    statusBox.innerText = "✅ Analysis Complete";
-                    eventSource.close();
-                } 
-                else if (text.trim() !== "") {
-                    // Append treatment details smoothly
-                    treatmentBox.innerText += text + " ";
-                }
-            };
+  <script>
+    const priceResult = document.querySelector('#price-result');
+    document.querySelector('#price-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const form = new FormData(event.currentTarget);
+      priceResult.textContent = 'Loading...';
+      const response = await fetch('/api/v1/mandi/prices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(Object.fromEntries(form))
+      });
+      priceResult.textContent = JSON.stringify(await response.json(), null, 2);
+    });
 
-            eventSource.onerror = function() {
-                statusBox.innerText = "Error connecting to backend.";
-                eventSource.close();
-            };
-        }
+    const diagnosisResult = document.querySelector('#diagnosis-result');
+    document.querySelector('#diagnosis-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      diagnosisResult.textContent = '';
+      const imageBase64 = new FormData(event.currentTarget).get('image_base64');
+      const response = await fetch('/api/v1/diagnose/stream', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_base64: imageBase64 })
+      });
+      for await (const chunk of response.body) {
+        diagnosisResult.textContent += new TextDecoder().decode(chunk);
+      }
+    });
 
-        // 3. WebSocket Telemetry (Leaves your existing logic intact)
-        const ws = new WebSocket((window.location.protocol === 'https:' ? 'wss://' : 'ws://') + window.location.host + '/api/v1/metrics/live');
-        ws.onmessage = function(event) {
-            const data = JSON.parse(event.data);
-            document.getElementById('agentState').innerText = data.state || 'IDLE';
-            document.getElementById('agentTokens').innerText = data.tokens_used || '0';
-        };
-    </script>
+    const telemetry = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/v1/metrics/live`);
+    telemetry.addEventListener('open', () => document.querySelector('#telemetry-status').textContent = 'Live connection active');
+    telemetry.addEventListener('message', (event) => {
+      const data = JSON.parse(event.data);
+      document.querySelector('#agent-state').textContent = data.state;
+      document.querySelector('#agent-tokens').textContent = data.tokens;
+      document.querySelector('#agent-breaker').textContent = data.circuit_breaker ? 'Active' : 'Clear';
+    });
+    telemetry.addEventListener('close', () => document.querySelector('#telemetry-status').textContent = 'Telemetry disconnected');
+  </script>
 </body>
 </html>
