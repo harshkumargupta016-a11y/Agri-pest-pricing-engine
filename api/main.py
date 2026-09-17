@@ -32,6 +32,12 @@ class PricingRequest(BaseModel):
     state: str
     district: str
 
+
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
 # 1. New Real-Time WebSocket Telemetry Endpoint
 @app.websocket("/api/v1/metrics/live")
 async def websocket_metrics(websocket: WebSocket):

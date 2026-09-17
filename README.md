@@ -29,4 +29,6 @@ An AI-powered agricultural diagnostic and mandi pricing platform built with high
 
 The `deploy-pipeline.yml` workflow runs tests, Bandit, Safety, and a Trivy scan before publishing an immutable SHA-tagged image and `latest` to GHCR. Pull requests run verification and container scanning without publishing.
 
+The API listens on port `8000` and exposes `GET /health` for container and load-balancer health checks. Local development can be started with `docker compose up --build`; Redis is used for distributed rate limiting and the API falls back to an in-memory limiter when Redis is unavailable.
+
 To enable the production host rollout, create the `production` environment, set the environment variable `DEPLOY_ENABLED` to `true`, and add these environment secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH`, `GHCR_READ_USER`, and `GHCR_READ_TOKEN`. The target host needs Docker Engine and Docker Compose v2; `DEPLOY_PATH` must be writable by `DEPLOY_USER`.

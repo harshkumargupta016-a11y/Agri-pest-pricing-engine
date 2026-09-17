@@ -18,4 +18,4 @@ RUN chown -R appuser:appuser /app
 USER appuser
 EXPOSE 8000
 
-ENTRYPOINT ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "api.main:app"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-c", "gunicorn_conf.py", "api.main:app"]
