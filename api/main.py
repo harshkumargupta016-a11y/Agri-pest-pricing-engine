@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, WebSocket, WebSocketDisconnect
 from fastapi.responses import ORJSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
@@ -86,3 +87,6 @@ async def get_mandi_prices(request: PricingRequest):
 # Mount Frontend
 os.makedirs("static", exist_ok=True)
 app.mount("/ui", StaticFiles(directory="static", html=True), name="static")
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/static/index.html")
