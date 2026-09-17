@@ -33,7 +33,7 @@ The API listens on port `8000` and exposes `GET /health` for container and load-
 
 To enable the production host rollout, create the `production` environment, set the environment variable `DEPLOY_ENABLED` to `true`, and add these environment secrets: `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY`, `DEPLOY_PATH`, `GHCR_READ_USER`, and `GHCR_READ_TOKEN`. The target host needs Docker Engine and Docker Compose v2; `DEPLOY_PATH` must be writable by `DEPLOY_USER`.
 
-## 🏆 Founder Code Audit & Technical Case Study (Day 43)
+
 
 This repository represents the culmination of a 45-day intensive engineering sprint, delivering the **Agri-Pest Pricing Engine**—a high-throughput, production-grade AI platform. The system has been architected from the ground up to fulfill strict enterprise requirements across scalability, performance, and security.
 
