@@ -18,6 +18,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 load_dotenv()
 
 app = FastAPI(title="Agri-Pest Pricing Engine", version="0.7.0", default_response_class=ORJSONResponse)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Initialize Prometheus Telemetry
 Instrumentator().instrument(app).expose(app)
